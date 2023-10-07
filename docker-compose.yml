@@ -1,0 +1,22 @@
+version: '3'
+services:
+  java-srv:
+    build:
+      context: java-srv
+    command: /bin/sh -c "/wait && gradle run"
+    environment:
+      - WAIT_HOSTS=db:26257
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+    depends_on:
+      - db
+    links:
+      - "db:db"
+
+  db:
+    image: cockroachdb/cockroach:v19.2.2
+    ports:
+     - "26257:26257"
+     - "8080:8080"
+    command: start-single-node --insecure
